@@ -1,0 +1,89 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: MoodDiary(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class MoodDiary extends StatefulWidget {
+  @override
+  _MoodDiaryState createState() => _MoodDiaryState();
+}
+
+class _MoodDiaryState extends State<MoodDiary> {
+  final List<Map<String, String>> _moodEntries = [];
+  final TextEditingController _controller = TextEditingController();
+
+  void _addEntry(String mood) {
+    if (_controller.text.isEmpty) return;
+
+    setState(() {
+      _moodEntries.add({
+        'text': _controller.text,
+        'mood': mood,
+      });
+      _controller.clear();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Mood diary'),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: _moodEntries.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(_moodEntries[index]['text']!),
+                  trailing: Text(
+                    _moodEntries[index]['mood'] == 'happy'
+                        ? '😄'
+                        : '😢',
+                    style: TextStyle(fontSize: 24),
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    decoration: InputDecoration(
+                      labelText: 'Your mood',
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.sentiment_satisfied),
+                  onPressed: () => _addEntry('happy'),
+                ),
+                IconButton(
+                  icon: Icon(Icons.sentiment_dissatisfied),
+                  onPressed: () => _addEntry('sad'),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
